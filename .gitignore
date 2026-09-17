@@ -1,0 +1,20 @@
+/target
+**/*.rs.bk
+Cargo.lock.orig
+.DS_Store
+
+# Python bindings
+mangel-py/.venv/
+**/__pycache__/
+*.py[cod]
+*.so
+*.pyd
+.pytest_cache/
+dist/
+
+# WASM bindings
+mangel-wasm/pkg/
+mangel-wasm/npm/wasm/
+mangel-wasm/npm/dist/
+package-lock.json
+node_modules/

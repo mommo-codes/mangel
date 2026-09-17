@@ -1,0 +1,29 @@
+# The core is deterministic and pure: the same input gives the same output,
+# every time, offline. These are the ways Rust code most often stops being
+# that without anyone deciding it should, and `cargo clippy -- -D warnings`
+# in CI turns each one into a failure.
+#
+# build.rs is the one exemption, and it says so at the top: it runs at compile
+# time on the machine doing the build, and everything it produces is static.
+
+disallowed-types = [
+    { path = "std::collections::HashMap", reason = "iteration order is randomised per process; use BTreeMap so output order is a function of the input" },
+    { path = "std::collections::HashSet", reason = "iteration order is randomised per process; use BTreeSet so output order is a function of the input" },
+    { path = "std::fs::File", reason = "the core reads nothing at run time" },
+    { path = "std::net::TcpStream", reason = "the core has no network" },
+    { path = "std::net::UdpSocket", reason = "the core has no network" },
+    { path = "std::process::Command", reason = "the core runs nothing" },
+    { path = "std::time::Instant", reason = "the core has no clock" },
+    { path = "std::time::SystemTime", reason = "the core has no clock" },
+]
+
+disallowed-methods = [
+    { path = "std::fs::read", reason = "the core reads nothing at run time" },
+    { path = "std::fs::read_to_string", reason = "the core reads nothing at run time" },
+    { path = "std::fs::read_dir", reason = "the core reads nothing at run time" },
+    { path = "std::env::var", reason = "an answer must not depend on the environment" },
+    { path = "std::env::var_os", reason = "an answer must not depend on the environment" },
+    { path = "std::env::vars", reason = "an answer must not depend on the environment" },
+    { path = "std::env::args", reason = "an answer must not depend on the environment" },
+    { path = "std::env::current_dir", reason = "an answer must not depend on the environment" },
+]

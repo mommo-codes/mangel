@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = ["mangel", "mangel-py", "mangel-wasm"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/mommo-codes/mangel"
+homepage = "https://github.com/mommo-codes/mangel"
+
+# The core crate must never gain a runtime dependency — see docs/vocabulary.md.
+# `cargo tree -p mangel --edges normal` is asserted to be a single line in CI.

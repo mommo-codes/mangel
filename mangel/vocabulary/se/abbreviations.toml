@@ -1,0 +1,12 @@
+# Swedish abbreviations.
+#
+# Each line is a word as it is written in product data, and the abbreviation
+# the golden standard uses for it:
+#
+#   "Word as written" = "ABBREVIATION"
+#
+# Both sides in double quotes, one entry per line, in any order. A word that
+# is deliberately left unabbreviated gets a comment saying why, so nobody
+# adds it later without knowing. See ../README.md before editing.
+
+"Laktosfri" = "LF"

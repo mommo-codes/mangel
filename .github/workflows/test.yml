@@ -1,0 +1,103 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rust:
+    name: Rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Format
+        run: cargo fmt --all -- --check
+
+      # Also enforces mangel/clippy.toml, which refuses the types and functions
+      # that would make the core impure: files, sockets, clocks, environment
+      # variables, and hash maps whose iteration order changes between runs.
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      # Building the core compiles the vocabulary, so a malformed TOML entry
+      # fails here, with the file and line in the message.
+      - name: Test
+        run: cargo test --workspace
+
+      # The core's zero-dependency guarantee is the kind of invariant that
+      # quietly stops being true, so it is asserted rather than intended.
+      # `cargo tree` prints one line when nothing is depended on. The `toml`
+      # build dependency is not a normal edge and does not count: it runs at
+      # compile time and is not linked into the library.
+      - name: The core has no runtime dependencies
+        run: |
+          lines=$(cargo tree -p mangel --edges normal --prefix none | grep -c .)
+          if [ "$lines" -ne 1 ]; then
+            echo "mangel has gained a runtime dependency:"
+            cargo tree -p mangel --edges normal
+            exit 1
+          fi
+          echo "mangel depends on nothing at run time."
+
+      # A release is one tree across three registries. The Python version is
+      # read from Cargo; npm's is written by hand, so it is the one that can
+      # drift.
+      - name: One version everywhere
+        run: |
+          cargo_version=$(cargo metadata --no-deps --format-version 1 \
+            | python3 -c "import json,sys; print(next(p['version'] for p in json.load(sys.stdin)['packages'] if p['name']=='mangel'))")
+          npm_version=$(python3 -c "import json; print(json.load(open('mangel-wasm/npm/package.json'))['version'])")
+          if [ "$cargo_version" != "$npm_version" ]; then
+            echo "Cargo says $cargo_version, mangel-wasm/npm/package.json says $npm_version."
+            exit 1
+          fi
+          echo "mangel $cargo_version everywhere."
+
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install
+        run: pip install pytest
+
+      # `pip install .` drives the maturin build backend and installs the
+      # wheel. `maturin develop` would be the local-development equivalent,
+      # but it requires an active virtualenv, and the runner has none.
+      - name: Build and test
+        working-directory: mangel-py
+        run: |
+          pip install .
+          pytest tests/ -q
+
+  typescript:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      # `npm test` is build + typecheck + node.
+      - name: Build and test
+        working-directory: mangel-wasm/npm
+        run: |
+          npm install
+          npm test

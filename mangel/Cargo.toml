@@ -1,0 +1,28 @@
+[package]
+name = "mangel"
+description = "Product data normalisation: irregular fields in, regular fields out. One implementation, callable from Rust, Python and TypeScript."
+keywords = ["product-data", "normalisation", "units", "abbreviations", "retail"]
+categories = ["parser-implementations", "text-processing"]
+readme = "../README.md"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+# Deliberately empty, and it stays that way. mangel is pure computation over a
+# string: no I/O, no clock, no randomness, nothing read at run time. The
+# vocabulary is data, but build.rs compiles it in rather than the library
+# loading it. See docs/vocabulary.md.
+[dependencies]
+
+# Build dependencies run on the machine compiling mangel and are not linked
+# into it, so the guarantee above still holds for anyone who depends on
+# mangel. The binary never parses TOML; build.rs does, once, at compile time.
+[build-dependencies]
+toml = "1"
+
+# tests/loader.rs runs the build script's checks directly, so it needs the
+# same parser. Dev-dependencies do not propagate to consumers either.
+[dev-dependencies]
+toml = "1"

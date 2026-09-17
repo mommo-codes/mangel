@@ -1,0 +1,29 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "mangel"
+dynamic = ["version"]
+requires-python = ">=3.8"
+description = "Product data normalisation: irregular fields in, regular fields out. Written in Rust."
+readme = "README.md"
+license = { text = "MIT" }
+keywords = ["product-data", "normalisation", "units", "abbreviations", "retail"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries",
+    "Intended Audience :: Developers",
+]
+
+[project.urls]
+Homepage = "https://github.com/mommo-codes/mangel"
+Repository = "https://github.com/mommo-codes/mangel"
+
+[tool.maturin]
+python-source = "python"
+module-name = "mangel._mangel"
+features = ["pyo3/extension-module"]

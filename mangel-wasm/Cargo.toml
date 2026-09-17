@@ -1,0 +1,19 @@
+[package]
+name = "mangel-wasm"
+description = "WebAssembly bindings for mangel."
+publish = false
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Same relationship as mangel-py: the binding depends on the core, the core
+# knows nothing about wasm. One compiled implementation reaches both.
+mangel = { path = "../mangel", version = "0.0.0" }
+wasm-bindgen = "0.2"
+# For handing a table to JavaScript as a Map.
+js-sys = "0.3"
