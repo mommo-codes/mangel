@@ -14,6 +14,19 @@ never reads them: by the time anyone installs it, every entry is part of the
 binary. That is what lets the same answers come out of the backend and the
 browser, offline.
 
+## Everything here is public
+
+The repository is public, and every release publishes these tables: to
+crates.io as the files themselves, and in the Python and npm packages as plain
+text inside the compiled library. Compiling does not hide an entry. Deleting
+one later does not unpublish it either — it stays in the git history and in
+every version already released.
+
+So before adding an entry, ask whether it is fine for anyone to read. A
+spelling like `"Laktosfri" = "LF"` is. A category formula, or a rule taken
+from an internal standard, may not be. **If you are not sure, ask before you
+commit it** — pushing to this repository is already publishing.
+
 ## Adding an entry
 
 Open the table and add one line:

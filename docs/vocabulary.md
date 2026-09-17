@@ -79,6 +79,30 @@ file is readable and editable by someone who does not write Rust — not that it
 skips the release. If release friction turns out to be the real problem, that
 is a different fix, and it will be visible by then.
 
+## Everything in mangel is public
+
+barkod is generic GTIN logic anyone could have written. mangel's vocabulary
+will not stay that generic: over time it carries a golden standard's
+conventions — abbreviations, unit spellings, and eventually rules and category
+formulas that are closer to internal work product. All of it is published:
+
+- **The repository is public** (since 2026-09-17). A push is a publication,
+  and git history keeps whatever a later commit removes.
+- **crates.io publishes the source verbatim** — `vocabulary/`, `build.rs`,
+  every parsing rule. A yanked version stays downloadable by anyone who asks
+  for it by number.
+- **The wheels and the wasm contain every entry as plain text.** Compiling
+  makes an entry fast to look up, not hard to read.
+
+This applies to parsing rules in Rust as much as to TOML tables: a rule
+written in code is published the same way.
+
+**Decided 2026-09-17:** spelling conventions at the level of `Laktosfri` →
+`LF` are fine to publish. Anything beyond that — a category formula, a rule
+lifted from an internal standard, a table someone would recognise as their
+organisation's work — is a deliberate decision made **before it is
+committed**, not discovered after a release.
+
 ## Where the line is
 
 The vocabulary holds **exact spellings and nothing else**. How a messy field
