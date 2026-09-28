@@ -35,6 +35,21 @@ impl Market {
         }
     }
 
+    /// The VAT rates this market uses, in percent, lowest first.
+    pub const fn vat_rates(self) -> &'static [u8] {
+        match self {
+            Market::Se => &[6, 12, 25],
+        }
+    }
+
+    /// The deposits (pant) a product can carry here, in the market's
+    /// currency, lowest first.
+    pub const fn deposits(self) -> &'static [u8] {
+        match self {
+            Market::Se => &[2, 3],
+        }
+    }
+
     /// The market with this code.
     ///
     /// Exact match only. `"SE"` and `" se"` are refused rather than guessed

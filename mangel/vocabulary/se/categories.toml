@@ -1,0 +1,253 @@
+# Swedish categories: each category, and the group it sits in.
+#
+#   "Category" = "Group"
+#
+# The category is what a product is filed under and what the register stores;
+# the group is the level above it. A category name appears once in the whole
+# list, so it is the key. VAT per category is in category_vat.toml, which must
+# name exactly the same categories. Grouped here for reading; order does not
+# matter. See ../README.md before editing.
+
+# Frukt & Bär
+"Frukt" = "Frukt & Bär"
+"Bär" = "Frukt & Bär"
+
+# Grönsaker
+"Grönsaker" = "Grönsaker"
+"Potatis & Rotfrukter" = "Grönsaker"
+"Lök" = "Grönsaker"
+"Sallad & Kål" = "Grönsaker"
+"Svamp" = "Grönsaker"
+"Färska Örter" = "Grönsaker"
+
+# Bageri
+"Färskt Bröd & Fika" = "Bageri"
+"Mjukt Bröd" = "Bageri"
+"Korv- & Hamburgerbröd" = "Bageri"
+"Hårt Bröd" = "Bageri"
+"Bullar & Bakverk" = "Bageri"
+"Kakor" = "Bageri"
+"Riskakor & Majskakor" = "Bageri"
+"Kex" = "Bageri"
+
+# Mejeri & Ägg
+"Mjölk" = "Mejeri & Ägg"
+"Ägg" = "Mejeri & Ägg"
+"Smör & Margarin" = "Mejeri & Ägg"
+"Yoghurt & Fil" = "Mejeri & Ägg"
+"Grädde, Gräddfil & Créme Fraiche" = "Mejeri & Ägg"
+"Cottage Cheese & Kvarg" = "Mejeri & Ägg"
+"Drickyoghurt & Shakes" = "Mejeri & Ägg"
+"Kaffe- & Baristamjölk" = "Mejeri & Ägg"
+"Mellanmål & Efterrätt" = "Mejeri & Ägg"
+
+# Ost
+"Påläggsost" = "Ost"
+"Riven Ost" = "Ost"
+"Matlagningsost" = "Ost"
+"Mjukost" = "Ost"
+"Färskost" = "Ost"
+"Dessertost" = "Ost"
+
+# Växtbaserat
+"Växtbaserad Mejeri" = "Växtbaserat"
+"Växtbaserad Ost" = "Växtbaserat"
+"Färskt Vego" = "Växtbaserat"
+
+# Kött & Fågel
+"Nöt & Vilt" = "Kött & Fågel"
+"Fläsk" = "Kött & Fågel"
+"Fågel" = "Kött & Fågel"
+
+# Chark & Pålägg
+"Korv & Köttbullar" = "Chark & Pålägg"
+"Charkuterier" = "Chark & Pålägg"
+"Skinka & Pålägg" = "Chark & Pålägg"
+"Bacon" = "Chark & Pålägg"
+"Öl- & Snackkorv" = "Chark & Pålägg"
+"Pastej & Blodpudding" = "Chark & Pålägg"
+
+# Fisk & Skaldjur
+"Färsk Fisk & Skaldjur" = "Fisk & Skaldjur"
+"Sill & Fiskkonserver" = "Fisk & Skaldjur"
+"Rom & Kaviar" = "Fisk & Skaldjur"
+
+# Färdigmat
+"Kylda Portioner" = "Färdigmat"
+"Färsk Pasta" = "Färdigmat"
+"Röror & Sallader" = "Färdigmat"
+"Kyld Färdigmat" = "Färdigmat"
+"Soppor & Konserver" = "Färdigmat"
+"Smörgåsar & Wraps" = "Färdigmat"
+
+# Dryck
+"Läsk" = "Dryck"
+"Energi & Funktionsdryck" = "Dryck"
+"Juice" = "Dryck"
+"Smoothie" = "Dryck"
+"Fruktdryck & Saft" = "Dryck"
+"Vatten" = "Dryck"
+"Iskaffe & Iste" = "Dryck"
+"Drinkmix" = "Dryck"
+"Alkoholfritt" = "Dryck"
+"Öl & Vin" = "Dryck"
+
+# Varm Dryck
+"Malet Kaffe" = "Varm Dryck"
+"Kaffebönor" = "Varm Dryck"
+"Snabbkaffe" = "Varm Dryck"
+"Kaffekapslar" = "Varm Dryck"
+"Te" = "Varm Dryck"
+"Chokladpulver" = "Varm Dryck"
+"Kaffetillbehör" = "Varm Dryck"
+
+# Glutenfritt
+"Glutenfritt Bageri" = "Glutenfritt"
+"Glutenfritt Fryst" = "Glutenfritt"
+"Glutenfritt Skafferi" = "Glutenfritt"
+
+# Godis & Choklad
+"Chokladkakor" = "Godis & Choklad"
+"Chokladpåsar" = "Godis & Choklad"
+"Styckchoklad" = "Godis & Choklad"
+"Chokladaskar" = "Godis & Choklad"
+"Godispåsar" = "Godis & Choklad"
+"Lakrits" = "Godis & Choklad"
+"Tablettaskar & Styckgodis" = "Godis & Choklad"
+"Tuggummi & Halstabletter" = "Godis & Choklad"
+
+# Chips & Snacks
+"Chips" = "Chips & Snacks"
+"Ostbågar" = "Chips & Snacks"
+"Popcorn" = "Chips & Snacks"
+"Snacks & Nötter" = "Chips & Snacks"
+"Dipp" = "Chips & Snacks"
+
+# Glass
+"Glasspaket" = "Glass"
+"Flerpack" = "Glass"
+"Styckglass" = "Glass"
+"Glasstillbehör" = "Glass"
+
+# Fryst
+"Fryst Pizza" = "Fryst"
+"Fryst Bageri" = "Fryst"
+"Frysta Efterrätter" = "Fryst"
+"Frysta Grönsaker" = "Fryst"
+"Fryst Frukt & Bär" = "Fryst"
+"Fryst Kött" = "Fryst"
+"Fryst Fisk & Skaldjur" = "Fryst"
+"Fryst Kyckling" = "Fryst"
+"Fryst Potatis & Pommes" = "Fryst"
+"Fryst Vego" = "Fryst"
+"Frysta Portionsrätter" = "Fryst"
+"Is" = "Fryst"
+
+# Smaksättare & Såser
+"Olja & Vinäger" = "Smaksättare & Såser"
+"Buljong & Fonder" = "Smaksättare & Såser"
+"Marinad & Smaksättare" = "Smaksättare & Såser"
+"Ketchup & Senap" = "Smaksättare & Såser"
+"Majonnäs & Dressing" = "Smaksättare & Såser"
+"Pastasåser" = "Smaksättare & Såser"
+"Såser & Kryddsmör" = "Smaksättare & Såser"
+"Torkade Kryddor & Örter" = "Smaksättare & Såser"
+
+# Skafferi
+"Frukt- & Grönsakskonserver" = "Skafferi"
+"Tomatbaserade Konserver" = "Skafferi"
+"Middagskit" = "Skafferi"
+"Pasta" = "Skafferi"
+"Ris, Nudlar & Quinoa" = "Skafferi"
+"Bönor & Linser" = "Skafferi"
+"Torkad Frukt & Nötter" = "Skafferi"
+"Flingor & Granola" = "Skafferi"
+"Sylt & Marmelad" = "Skafferi"
+"Honung" = "Skafferi"
+"Spreads" = "Skafferi"
+"Gryn & Frön" = "Skafferi"
+"Oliver" = "Skafferi"
+
+# Bakning
+"Socker & Sötning" = "Bakning"
+"Mjöl & Redning" = "Bakning"
+"Bakmix" = "Bakning"
+"Jäsning & Bakning" = "Bakning"
+"Kakao & Blockchoklad" = "Bakning"
+
+# Världens Mat
+"Asiatiskt" = "Världens Mat"
+"Tacos" = "Världens Mat"
+"Mellanöstern & Nordafrika" = "Världens Mat"
+
+# Hälsa & Träning
+"Bars" = "Hälsa & Träning"
+"Måltidsersättning" = "Hälsa & Träning"
+"Proteinpulver" = "Hälsa & Träning"
+"Hälsokost" = "Hälsa & Träning"
+
+# Barn
+"Blöjor" = "Barn"
+"Barnmat" = "Barn"
+"Klämmisar & Mellanmål" = "Barn"
+"Gröt & Välling" = "Barn"
+"Mjölkersättning" = "Barn"
+"Babyvård" = "Barn"
+"Babytillbehör" = "Barn"
+
+# Städ & Hushåll
+"Toa- & Hushållspapper" = "Städ & Hushåll"
+"Städtillbehör" = "Städ & Hushåll"
+"Rengöringsmedel" = "Städ & Hushåll"
+"Tvätt" = "Städ & Hushåll"
+"Disk" = "Städ & Hushåll"
+
+# Hem & Fritid
+"Köksutrustning" = "Hem & Fritid"
+"Påsar & Förvaring" = "Hem & Fritid"
+"Folie & Formar" = "Hem & Fritid"
+"Kontorsmaterial" = "Hem & Fritid"
+"Engångsartiklar & Servetter" = "Hem & Fritid"
+"Till Festen" = "Hem & Fritid"
+"Glödlampor & Batterier" = "Hem & Fritid"
+"Ljus & Tändare" = "Hem & Fritid"
+"Leksaker & Spel" = "Hem & Fritid"
+"Övrigt Hem & Fritid" = "Hem & Fritid"
+
+# Skönhet & Hygien
+"Munvård" = "Skönhet & Hygien"
+"Kroppsvård" = "Skönhet & Hygien"
+"Deodorant & Lotions" = "Skönhet & Hygien"
+"Hårvård" = "Skönhet & Hygien"
+"Ansiktsvård" = "Skönhet & Hygien"
+"Smink" = "Skönhet & Hygien"
+"Handtvål & Desinfektion" = "Skönhet & Hygien"
+"Bomull, Tops & Plåster" = "Skönhet & Hygien"
+"Rakning & Hårborttagning" = "Skönhet & Hygien"
+"Mensskydd" = "Skönhet & Hygien"
+"Fot- & Nagelvård" = "Skönhet & Hygien"
+"Intim" = "Skönhet & Hygien"
+"Solskydd" = "Skönhet & Hygien"
+
+# Djur
+"Katt" = "Djur"
+"Hund" = "Djur"
+"Övrigt Djur" = "Djur"
+
+# Blommor & Tillbehör
+"Blommor & Tillbehör" = "Blommor & Tillbehör"
+
+# Nikotin & Tobak
+"Tobaksfritt Snus" = "Nikotin & Tobak"
+"Snus" = "Nikotin & Tobak"
+"Vapes" = "Nikotin & Tobak"
+"Cigaretter" = "Nikotin & Tobak"
+
+# Receptfria Läkemedel
+"Receptfria Läkemedel" = "Receptfria Läkemedel"
+
+# Jul & Nyår
+"Jul & Nyår" = "Jul & Nyår"
+
+# Påsk
+"Påsk" = "Påsk"

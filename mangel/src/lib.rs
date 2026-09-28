@@ -7,9 +7,10 @@
 //! multipack of three 45-metre units, `45l` is 45 litres in the golden
 //! standard's spelling, `Laktosfri` is `LF`, `coca cola` is `Coca-Cola`.
 //!
-//! **None of that parsing exists yet.** What exists is the structure it will
-//! be built into: the [`Market`] every answer is given for, and the
-//! [`Vocabulary`] compiled into the binary from `vocabulary/`.
+//! The first rules are the ones Name Scrubbing's cleaning sheet reads with
+//! — see [`rules`]: a size, a cleaned name, a category and its VAT, and a
+//! deposit. Each answers for one [`Market`], from the [`Vocabulary`]
+//! compiled into the binary from `vocabulary/`.
 //!
 //! ## Deterministic and pure
 //!
@@ -28,6 +29,7 @@
 #![forbid(unsafe_code)]
 
 mod market;
+pub mod rules;
 pub mod vocabulary;
 
 pub use market::{Market, UnknownMarket};

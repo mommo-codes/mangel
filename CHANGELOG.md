@@ -1,6 +1,30 @@
 # Changelog
 
-## Unreleased
+## 0.1.0
+
+The first rules — the ones Name Scrubbing's cleaning sheet reads with. Every
+rule answers for one market and returns what a field means, or declines with
+a sentence a person can act on. Nothing is guessed.
+
+- `size`: `56kg` is 56 and `kg`; `0,5 l` is 0.5 and `L`. The unit is matched
+  without regard to case against the new `units` table and returned in the
+  golden spelling. No unit, no amount, a multipack or an unknown unit is
+  declined.
+- `cleaned_name`: trimmed, spacing collapsed, and the first word must start
+  with a capital. Checked, not fixed.
+- `category`: found by its name, by a group holding only it, or by a keyword
+  that starts or ends a word of exactly one category's name (`pizza` is Fryst
+  Pizza; `kaffe` is in seven and is declined with them). The Swedish list —
+  180 categories in 32 groups — is the new `categories` table.
+- `vat`: a category's rate, from the new `category_vat` table. Typed only for
+  the two mixed-rate categories (Jul & Nyår, Påsk); a typed rate that
+  contradicts the category is declined, not corrected.
+- `deposit`: 2 or 3 in Sweden, or none.
+- `Market::vat_rates` and `Market::deposits`.
+- All of it in Python (`mangel.Declined`, a `ValueError`) and TypeScript (an
+  `Error` named `"Declined"`, and `isDeclined`).
+
+## 0.0.0
 
 The scaffold. No parsing rules, nothing published.
 

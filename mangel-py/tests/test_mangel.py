@@ -44,3 +44,44 @@ class TestMarkets:
     def test_a_market_is_required(self):
         with pytest.raises(TypeError):
             mangel.abbreviations()  # type: ignore[call-arg]
+
+
+class TestRules:
+    """The sheet's rules cross the boundary with their answers and their
+    reasons intact. What each rule decides is tested once, in Rust."""
+
+    def test_a_size_is_a_pair(self):
+        assert mangel.size("56kg", "se") == ("56", "kg")
+        assert mangel.size("0,5 l", "se") == ("0.5", "L")
+
+    def test_a_decline_is_a_value_error_with_the_reason(self):
+        with pytest.raises(mangel.Declined, match="no unit"):
+            mangel.size("56", "se")
+        assert issubclass(mangel.Declined, ValueError)
+
+    def test_a_category_is_a_plain_dict(self):
+        found = mangel.category("pizza", "se")
+        assert found == {"name": "Fryst Pizza", "group": "Fryst", "vat": 12}
+        assert mangel.category("Påsk", "se")["vat"] is None
+
+    def test_every_category_is_listed(self):
+        listed = mangel.categories("se")
+        assert len(listed) == 180
+        assert {"name": "Frukt", "group": "Frukt & Bär", "vat": 12} in listed
+
+    def test_vat_follows_the_category_and_refuses_a_clash(self):
+        assert mangel.vat("Frukt", "", "se") == 12
+        with pytest.raises(mangel.Declined, match="does not match Frukt"):
+            mangel.vat("Frukt", "25", "se")
+
+    def test_the_rest(self):
+        assert mangel.cleaned_name(" Mellanmjölk ") == "Mellanmjölk"
+        assert mangel.deposit("", "se") is None
+        assert mangel.deposit("3 kr", "se") == 3
+        with pytest.raises(mangel.Declined):
+            mangel.cleaned_name("mjölk")
+
+    def test_a_bad_market_is_not_a_decline(self):
+        with pytest.raises(ValueError) as raised:
+            mangel.size("56kg", "SE")
+        assert not isinstance(raised.value, mangel.Declined)

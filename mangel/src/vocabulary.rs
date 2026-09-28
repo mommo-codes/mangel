@@ -19,6 +19,16 @@ pub struct Vocabulary {
     /// golden standard uses for it. Sorted by word in byte order, and no word
     /// appears twice.
     pub abbreviations: &'static [(&'static str, &'static str)],
+    /// Each size unit as it is written, lowercase, with the golden
+    /// standard's spelling of it. Sorted, no unit twice.
+    pub units: &'static [(&'static str, &'static str)],
+    /// Each category with the group it sits in. A category name appears
+    /// once in the whole list. Sorted by category.
+    pub categories: &'static [(&'static str, &'static str)],
+    /// Each category's VAT rate in percent, as text, or `"manual"` for a
+    /// category whose products carry more than one rate. Names exactly the
+    /// categories in [`Vocabulary::categories`]. Sorted by category.
+    pub category_vat: &'static [(&'static str, &'static str)],
 }
 
 impl Vocabulary {
