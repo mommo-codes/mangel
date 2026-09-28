@@ -1,0 +1,21 @@
+# Swedish size units: each unit as it is written in product data, and the
+# golden standard's spelling of it — the spelling the register accepts.
+#
+#   "as written" = "golden"
+#
+# Keys are lowercase: a unit is matched without regard to case, so "KG" and
+# "Kg" find "kg" here. A unit not listed is refused, never guessed. See
+# ../README.md before editing.
+
+"g" = "g"
+"gr" = "g"
+"gram" = "g"
+"kg" = "kg"
+"kilo" = "kg"
+"ml" = "ml"
+"cl" = "cl"
+"dl" = "dl"
+"l" = "L"
+"liter" = "L"
+"st" = "st"
+"styck" = "st"

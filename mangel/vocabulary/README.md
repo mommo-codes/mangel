@@ -6,8 +6,18 @@ Rust to change anything in here.
 ```
 vocabulary/
 └── se/                     Sweden
-    └── abbreviations.toml  "Laktosfri" = "LF"
+    ├── abbreviations.toml  "Laktosfri" = "LF"
+    ├── units.toml          "liter" = "L"          (as written, lowercase → golden)
+    ├── categories.toml     "Frukt" = "Frukt & Bär"   (category → its group)
+    └── category_vat.toml   "Frukt" = "12"         (category → VAT %, or "manual")
 ```
+
+`categories.toml` and `category_vat.toml` must name exactly the same
+categories — a test holds them to it. A category name appears once in the
+whole list: it is what the register stores. `"manual"` is a category whose
+products carry more than one VAT rate (Jul & Nyår, Påsk), so the rate is typed
+per product. The rates themselves (6, 12, 25) and the deposits (2, 3) are the
+market's, in `src/market.rs`, not here.
 
 These files are compiled into mangel when it is built. The published library
 never reads them: by the time anyone installs it, every entry is part of the

@@ -8,7 +8,15 @@
  * rule here, and there must never be one.
  */
 
-import initWasm, { abbreviations as wasmAbbreviations } from "../wasm/mangel_wasm.js";
+import initWasm, {
+  abbreviations as wasmAbbreviations,
+  categories as wasmCategories,
+  category as wasmCategory,
+  cleanedName as wasmCleanedName,
+  deposit as wasmDeposit,
+  size as wasmSize,
+  vat as wasmVat,
+} from "../wasm/mangel_wasm.js";
 
 let ready = false;
 
@@ -49,4 +57,64 @@ function assertReady(): void {
 export function abbreviations(market: string): ReadonlyMap<string, string> {
   assertReady();
   return wasmAbbreviations(market) as Map<string, string>;
+}
+
+/** A size, read: the amount as a decimal string, the unit in the golden
+ *  standard's spelling. */
+export interface Size {
+  amount: string;
+  unit: string;
+}
+
+/** A category of the market's list. `vat` is `null` for a category whose
+ *  products carry more than one rate, so the VAT is typed per product. */
+export interface Category {
+  name: string;
+  group: string;
+  vat: number | null;
+}
+
+/**
+ * A rule's refusal. Every rule below throws one — an `Error` named
+ * `"Declined"` whose message is a sentence a person can act on — rather
+ * than guessing. A bad market code throws a plain `Error` instead.
+ */
+export function isDeclined(error: unknown): error is Error {
+  return error instanceof Error && error.name === "Declined";
+}
+
+/** A size read into its amount and unit: `"56kg"` is `{ amount: "56", unit: "kg" }`. */
+export function size(text: string, market: string): Size {
+  assertReady();
+  return wasmSize(text, market) as Size;
+}
+
+/** A cleaned name, checked: trimmed, and its first word starting with a capital. */
+export function cleanedName(text: string): string {
+  assertReady();
+  return wasmCleanedName(text);
+}
+
+/** The category meant by what was typed: its name, a group of one, or a keyword. */
+export function category(text: string, market: string): Category {
+  assertReady();
+  return wasmCategory(text, market) as Category;
+}
+
+/** Every category of the market, sorted by name. */
+export function categories(market: string): Category[] {
+  assertReady();
+  return wasmCategories(market) as Category[];
+}
+
+/** The VAT for a product in `category`, given what was typed in its field. */
+export function vat(category: string, text: string, market: string): number {
+  assertReady();
+  return wasmVat(category, text, market);
+}
+
+/** A deposit, or `undefined` for an empty field. */
+export function deposit(text: string, market: string): number | undefined {
+  assertReady();
+  return wasmDeposit(text, market);
 }

@@ -15,10 +15,9 @@ mangel takes a messy field and returns what it means:
 | `Laktosfri` | `LF` |
 | `coca cola` | `Coca-Cola` — casing and spacing only; matching it to a brand row is CatalogOS's job |
 
-> **Status: scaffold.** None of the parsing above exists yet; it is being
-> built one rule at a time. What exists is the structure it goes into: the
-> three runtimes, the market every answer is given for, and the vocabulary
-> compiled into the binary. Nothing is published.
+> **Status: 0.1.0 — the cleaning sheet's rules.** `size`, `cleaned_name`,
+> `category`, `vat` and `deposit`, for Sweden, in all three runtimes. The
+> multipack, abbreviation and brand-casing parsing below is still to come.
 
 ## Deterministic and pure
 

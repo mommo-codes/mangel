@@ -34,7 +34,7 @@ use market::Market;
 /// Every table a market has. Each name must be a field of `Vocabulary`, and
 /// every field must be named here: the generated code does not compile
 /// otherwise, so the two cannot drift apart.
-const TABLES: &[&str] = &["abbreviations"];
+const TABLES: &[&str] = &["abbreviations", "units", "categories", "category_vat"];
 
 fn main() {
     // Cargo scans the whole directory, so adding, editing, renaming or

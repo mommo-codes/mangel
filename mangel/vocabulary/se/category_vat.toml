@@ -1,0 +1,252 @@
+# Swedish VAT per category, in percent.
+#
+#   "Category" = "12"
+#
+# "manual" is a category whose products carry more than one rate (a seasonal
+# range mixing food and non-food), so the rate cannot follow from the category
+# and is typed per product. Every category in categories.toml is here, and
+# nothing else. See ../README.md before editing.
+
+# Frukt & Bär
+"Frukt" = "12"
+"Bär" = "12"
+
+# Grönsaker
+"Grönsaker" = "12"
+"Potatis & Rotfrukter" = "12"
+"Lök" = "12"
+"Sallad & Kål" = "12"
+"Svamp" = "12"
+"Färska Örter" = "12"
+
+# Bageri
+"Färskt Bröd & Fika" = "12"
+"Mjukt Bröd" = "12"
+"Korv- & Hamburgerbröd" = "12"
+"Hårt Bröd" = "12"
+"Bullar & Bakverk" = "12"
+"Kakor" = "12"
+"Riskakor & Majskakor" = "12"
+"Kex" = "12"
+
+# Mejeri & Ägg
+"Mjölk" = "12"
+"Ägg" = "12"
+"Smör & Margarin" = "12"
+"Yoghurt & Fil" = "12"
+"Grädde, Gräddfil & Créme Fraiche" = "12"
+"Cottage Cheese & Kvarg" = "12"
+"Drickyoghurt & Shakes" = "12"
+"Kaffe- & Baristamjölk" = "12"
+"Mellanmål & Efterrätt" = "12"
+
+# Ost
+"Påläggsost" = "12"
+"Riven Ost" = "12"
+"Matlagningsost" = "12"
+"Mjukost" = "12"
+"Färskost" = "12"
+"Dessertost" = "12"
+
+# Växtbaserat
+"Växtbaserad Mejeri" = "12"
+"Växtbaserad Ost" = "12"
+"Färskt Vego" = "12"
+
+# Kött & Fågel
+"Nöt & Vilt" = "12"
+"Fläsk" = "12"
+"Fågel" = "12"
+
+# Chark & Pålägg
+"Korv & Köttbullar" = "12"
+"Charkuterier" = "12"
+"Skinka & Pålägg" = "12"
+"Bacon" = "12"
+"Öl- & Snackkorv" = "12"
+"Pastej & Blodpudding" = "12"
+
+# Fisk & Skaldjur
+"Färsk Fisk & Skaldjur" = "12"
+"Sill & Fiskkonserver" = "12"
+"Rom & Kaviar" = "12"
+
+# Färdigmat
+"Kylda Portioner" = "12"
+"Färsk Pasta" = "12"
+"Röror & Sallader" = "12"
+"Kyld Färdigmat" = "12"
+"Soppor & Konserver" = "12"
+"Smörgåsar & Wraps" = "12"
+
+# Dryck
+"Läsk" = "12"
+"Energi & Funktionsdryck" = "12"
+"Juice" = "12"
+"Smoothie" = "12"
+"Fruktdryck & Saft" = "12"
+"Vatten" = "12"
+"Iskaffe & Iste" = "12"
+"Drinkmix" = "12"
+"Alkoholfritt" = "12"
+"Öl & Vin" = "25"
+
+# Varm Dryck
+"Malet Kaffe" = "12"
+"Kaffebönor" = "12"
+"Snabbkaffe" = "12"
+"Kaffekapslar" = "12"
+"Te" = "12"
+"Chokladpulver" = "12"
+"Kaffetillbehör" = "25"
+
+# Glutenfritt
+"Glutenfritt Bageri" = "12"
+"Glutenfritt Fryst" = "12"
+"Glutenfritt Skafferi" = "12"
+
+# Godis & Choklad
+"Chokladkakor" = "12"
+"Chokladpåsar" = "12"
+"Styckchoklad" = "12"
+"Chokladaskar" = "12"
+"Godispåsar" = "12"
+"Lakrits" = "12"
+"Tablettaskar & Styckgodis" = "12"
+"Tuggummi & Halstabletter" = "12"
+
+# Chips & Snacks
+"Chips" = "12"
+"Ostbågar" = "12"
+"Popcorn" = "12"
+"Snacks & Nötter" = "12"
+"Dipp" = "12"
+
+# Glass
+"Glasspaket" = "12"
+"Flerpack" = "12"
+"Styckglass" = "12"
+"Glasstillbehör" = "12"
+
+# Fryst
+"Fryst Pizza" = "12"
+"Fryst Bageri" = "12"
+"Frysta Efterrätter" = "12"
+"Frysta Grönsaker" = "12"
+"Fryst Frukt & Bär" = "12"
+"Fryst Kött" = "12"
+"Fryst Fisk & Skaldjur" = "12"
+"Fryst Kyckling" = "12"
+"Fryst Potatis & Pommes" = "12"
+"Fryst Vego" = "12"
+"Frysta Portionsrätter" = "12"
+"Is" = "12"
+
+# Smaksättare & Såser
+"Olja & Vinäger" = "12"
+"Buljong & Fonder" = "12"
+"Marinad & Smaksättare" = "12"
+"Ketchup & Senap" = "12"
+"Majonnäs & Dressing" = "12"
+"Pastasåser" = "12"
+"Såser & Kryddsmör" = "12"
+"Torkade Kryddor & Örter" = "12"
+
+# Skafferi
+"Frukt- & Grönsakskonserver" = "12"
+"Tomatbaserade Konserver" = "12"
+"Middagskit" = "12"
+"Pasta" = "12"
+"Ris, Nudlar & Quinoa" = "12"
+"Bönor & Linser" = "12"
+"Torkad Frukt & Nötter" = "12"
+"Flingor & Granola" = "12"
+"Sylt & Marmelad" = "12"
+"Honung" = "12"
+"Spreads" = "12"
+"Gryn & Frön" = "12"
+"Oliver" = "12"
+
+# Bakning
+"Socker & Sötning" = "12"
+"Mjöl & Redning" = "12"
+"Bakmix" = "12"
+"Jäsning & Bakning" = "12"
+"Kakao & Blockchoklad" = "12"
+
+# Världens Mat
+"Asiatiskt" = "12"
+"Tacos" = "12"
+"Mellanöstern & Nordafrika" = "12"
+
+# Hälsa & Träning
+"Bars" = "12"
+"Måltidsersättning" = "12"
+"Proteinpulver" = "12"
+"Hälsokost" = "12"
+
+# Barn
+"Blöjor" = "25"
+"Barnmat" = "12"
+"Klämmisar & Mellanmål" = "12"
+"Gröt & Välling" = "12"
+"Mjölkersättning" = "12"
+"Babyvård" = "25"
+"Babytillbehör" = "25"
+
+# Städ & Hushåll
+"Toa- & Hushållspapper" = "25"
+"Städtillbehör" = "25"
+"Rengöringsmedel" = "25"
+"Tvätt" = "25"
+"Disk" = "25"
+
+# Hem & Fritid
+"Köksutrustning" = "25"
+"Påsar & Förvaring" = "25"
+"Folie & Formar" = "25"
+"Kontorsmaterial" = "25"
+"Engångsartiklar & Servetter" = "25"
+"Till Festen" = "25"
+"Glödlampor & Batterier" = "25"
+"Ljus & Tändare" = "25"
+"Leksaker & Spel" = "25"
+"Övrigt Hem & Fritid" = "25"
+
+# Skönhet & Hygien
+"Munvård" = "25"
+"Kroppsvård" = "25"
+"Deodorant & Lotions" = "25"
+"Hårvård" = "25"
+"Ansiktsvård" = "25"
+"Smink" = "25"
+"Handtvål & Desinfektion" = "25"
+"Bomull, Tops & Plåster" = "25"
+"Rakning & Hårborttagning" = "25"
+"Mensskydd" = "25"
+"Fot- & Nagelvård" = "25"
+"Intim" = "25"
+"Solskydd" = "25"
+
+# Djur
+"Katt" = "25"
+"Hund" = "25"
+"Övrigt Djur" = "25"
+
+# Blommor & Tillbehör
+"Blommor & Tillbehör" = "25"
+
+# Nikotin & Tobak
+"Tobaksfritt Snus" = "25"
+"Snus" = "25"
+"Vapes" = "25"
+"Cigaretter" = "25"
+
+# Receptfria Läkemedel
+"Receptfria Läkemedel" = "25"
+
+# Jul & Nyår
+"Jul & Nyår" = "manual"
+
+# Påsk
+"Påsk" = "manual"
