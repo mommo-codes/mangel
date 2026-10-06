@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- `size` declines an amount that reads as two numbers: one to three digits
+  (not starting with 0), a separator, and exactly three digits. `1.000 g`
+  was read as 1 g; it is now declined as "could be 1 g or 1000 g". A point
+  declines in every unit. A comma declines in g, ml, cl, dl and st and stays
+  a decimal in kg and L, where three decimals are whole grams and
+  millilitres (`1,048kg`, `1,000 kg`). `0,750 L` and `1,25 kg` read as
+  before. The rule recorded in #2; the bug is #7.
+
 ## 0.1.0
 
 The first rules — the ones Name Scrubbing's cleaning sheet reads with. Every

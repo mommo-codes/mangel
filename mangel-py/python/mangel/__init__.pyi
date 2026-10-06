@@ -29,8 +29,9 @@ def size(text: str, market: str) -> tuple[str, str]:
     ``"0,5 l"`` is ``("0.5", "L")``. The amount is a decimal string; the
     unit is the golden standard's spelling.
 
-    Raises ``Declined`` for no unit, no amount, a multipack, or a unit the
-    market does not have.
+    Raises ``Declined`` for no unit, no amount, a multipack, a unit the
+    market does not have, or an amount that reads as two numbers:
+    ``"1.000 g"`` could be 1 g or 1000 g.
     """
     ...
 

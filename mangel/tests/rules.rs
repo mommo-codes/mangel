@@ -42,6 +42,55 @@ fn a_size_is_not_guessed() {
 }
 
 #[test]
+fn an_amount_that_reads_two_ways_is_declined() {
+    // A point and three digits is a decimal in some conventions and a
+    // thousands separator in others: declined in every unit.
+    for (text, readings) in [
+        ("1.000 g", "could be 1 g or 1000 g"),
+        ("1.000 kg", "could be 1 kg or 1000 kg"),
+        ("1.500 L", "could be 1.5 L or 1500 L"),
+        ("250.000 ml", "could be 250 ml or 250000 ml"),
+        ("3.000st", "could be 3 st or 3000 st"),
+    ] {
+        let reason = declined(size(text, SE));
+        assert!(reason.contains(readings), "{text:?}: {reason}");
+    }
+    // A comma and three digits, outside kg and L, where a thousands
+    // separator is the likelier reading.
+    for (text, readings) in [
+        ("1,000 g", "could be 1 g or 1000 g"),
+        ("1,500 ml", "could be 1,5 ml or 1500 ml"),
+        ("2,250 cl", "could be 2,25 cl or 2250 cl"),
+        ("1,000 dl", "could be 1 dl or 1000 dl"),
+    ] {
+        let reason = declined(size(text, SE));
+        assert!(reason.contains(readings), "{text:?}: {reason}");
+    }
+}
+
+#[test]
+fn three_decimals_after_a_comma_are_whole_grams_in_kg_and_l() {
+    assert_eq!(read_size("1,048kg"), ("1.048".into(), "kg"));
+    assert_eq!(read_size("1,000 kg"), ("1".into(), "kg"));
+    assert_eq!(read_size("1,500 L"), ("1.5".into(), "L"));
+    assert_eq!(read_size("2,250 liter"), ("2.25".into(), "L"));
+}
+
+#[test]
+fn an_amount_with_one_reading_is_still_read() {
+    // Nothing opens a thousand with 0, so these are decimals. 0,75 L is a
+    // wine bottle, with either separator.
+    assert_eq!(read_size("0,750 L"), ("0.75".into(), "L"));
+    assert_eq!(read_size("0.750 L"), ("0.75".into(), "L"));
+    assert_eq!(read_size("0.250 kg"), ("0.25".into(), "kg"));
+    assert_eq!(read_size("0,125 g"), ("0.125".into(), "g"));
+    // Two decimals is no thousands separator.
+    assert_eq!(read_size("1,25 kg"), ("1.25".into(), "kg"));
+    assert_eq!(read_size("1.50L"), ("1.5".into(), "L"));
+    assert_eq!(read_size("1000 g"), ("1000".into(), "g"));
+}
+
+#[test]
 fn the_units_are_the_registers_spellings() {
     let golden = ["g", "kg", "ml", "cl", "dl", "L", "st"];
     for (written, unit) in Vocabulary::of(SE).units {

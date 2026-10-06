@@ -83,7 +83,9 @@ export function isDeclined(error: unknown): error is Error {
   return error instanceof Error && error.name === "Declined";
 }
 
-/** A size read into its amount and unit: `"56kg"` is `{ amount: "56", unit: "kg" }`. */
+/** A size read into its amount and unit: `"56kg"` is `{ amount: "56", unit: "kg" }`.
+ *  An amount that reads as two numbers is declined: `"1.000 g"` could be
+ *  1 g or 1000 g. */
 export function size(text: string, market: string): Size {
   assertReady();
   return wasmSize(text, market) as Size;

@@ -3,7 +3,8 @@
 //! One field in, two out — the amount and the unit, the unit in the golden
 //! standard's spelling from the market's `units` table. The unit is matched
 //! without regard to case; nothing else is loosened. A multipack, a size
-//! with no unit, or a unit the table does not hold is declined.
+//! with no unit, a unit the table does not hold, or an amount that reads
+//! as two different numbers (`1.000 g`) is declined.
 
 use super::{listed, Declined};
 use crate::{Market, Vocabulary};
@@ -27,6 +28,7 @@ pub struct Size {
 /// assert_eq!((read.amount.as_str(), read.unit), ("56", "kg"));
 /// assert_eq!(size("0,5 l", Market::Se).unwrap().unit, "L");
 /// assert!(size("56", Market::Se).is_err());
+/// assert!(size("1.000 g", Market::Se).is_err()); // 1 g or 1000 g
 /// ```
 pub fn size(text: &str, market: Market) -> Result<Size, Declined> {
     let text = text.trim();
@@ -77,6 +79,11 @@ pub fn size(text: &str, market: Market) -> Result<Size, Declined> {
             unit_list(units)
         )));
     };
+    if let Some((decimal, thousands)) = two_readings(number, unit) {
+        return Err(Declined::new(format!(
+            "{text:?} could be {decimal} {unit} or {thousands} {unit}; write the one it is"
+        )));
+    }
     if amount == "0" {
         return Err(Declined::new("a size is more than 0"));
     }
@@ -109,6 +116,41 @@ fn amount(number: &str) -> Option<String> {
     } else {
         format!("{whole}.{fraction}")
     })
+}
+
+/// `1.000` and `1,500`, read both ways: as a decimal (1, 1.5) and with a
+/// thousands separator (1000, 1500). Guessing either is a silent 1000x
+/// error, so a number that has both readings is declined. See issue #2.
+///
+/// It has both when exactly three digits follow the separator and the part
+/// before it could open a thousand: one to three digits, not starting with
+/// 0. `0,750` and `1,25` have one reading only.
+///
+/// A point declines in every unit. A comma is a decimal in kg and L, where
+/// three decimals are whole grams and millilitres (`1,048kg`, `1,500 L`),
+/// and declines in the rest, where a thousands separator is the likelier
+/// reading.
+///
+/// `number` holds at most one separator: `amount` has already refused more.
+/// Both readings come back as written, with the separator that was typed.
+fn two_readings(number: &str, unit: &str) -> Option<(String, String)> {
+    let at = number.find([',', '.'])?;
+    let (whole, rest) = number.split_at(at);
+    let (separator, fraction) = rest.split_at(1);
+    let opens_a_thousand = (1..=3).contains(&whole.len()) && !whole.starts_with('0');
+    if !opens_a_thousand || fraction.len() != 3 {
+        return None;
+    }
+    if separator == "," && matches!(unit, "kg" | "L") {
+        return None;
+    }
+    let decimals = fraction.trim_end_matches('0');
+    let decimal = if decimals.is_empty() {
+        whole.to_owned()
+    } else {
+        format!("{whole}{separator}{decimals}")
+    };
+    Some((decimal, format!("{whole}{fraction}")))
 }
 
 /// The golden spellings, once each, in the order the table first gives them.
