@@ -15,10 +15,10 @@ mangel takes a messy field and returns what it means:
 | `Laktosfri` | `LF` |
 | `coca cola` | `Coca-Cola` — casing and spacing only; matching it to a brand row is CatalogOS's job |
 
-> **Status: 0.1.0 — the cleaning sheet's rules**, plus, unreleased, `read()`:
-> one call for every field, with profiles and language inputs
-> ([docs/read.md](docs/read.md)). `size`, `cleaned_name`, `category`, `vat`
-> and `deposit`, for Sweden, in all three runtimes. The fixing rules (OCR
+> **Status: 0.2.0 — `read()`**: one call for every field, with profiles and
+> language inputs ([docs/read.md](docs/read.md)), over the cleaning sheet's
+> rules: `size`, `cleaned_name`, `category`, `vat` and `deposit`, for Sweden,
+> in all three runtimes. The fixing rules (OCR
 > weights and volumes first, then countries, names, allergens) are filed as
 > issues, one per field, market and language. The multipack, abbreviation and
 > brand-casing parsing below is still to come.

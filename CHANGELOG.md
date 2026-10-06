@@ -1,9 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
-**The next release is 0.2.0**: one change below breaks the Rust API. Python
-and TypeScript callers are unaffected.
+One change below breaks the Rust API, hence 0.2.0. Python and TypeScript
+callers are unaffected.
 
 ### read(): one call for every field
 
