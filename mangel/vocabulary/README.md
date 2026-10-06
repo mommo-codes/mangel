@@ -1,16 +1,37 @@
 # vocabulary/
 
-The words mangel knows, one directory per market. You do not need to write
-Rust to change anything in here.
+The words mangel knows: one directory per market, and one per language. You
+do not need to write Rust to change anything in here.
 
 ```
 vocabulary/
-└── se/                     Sweden
-    ├── abbreviations.toml  "Laktosfri" = "LF"
-    ├── units.toml          "liter" = "L"          (as written, lowercase → golden)
-    ├── categories.toml     "Frukt" = "Frukt & Bär"   (category → its group)
-    └── category_vat.toml   "Frukt" = "12"         (category → VAT %, or "manual")
+├── se/                     Sweden: how its register writes things
+│   ├── abbreviations.toml  "Laktosfri" = "LF"
+│   ├── units.toml          "l" = "L"              (unit → the register's spelling)
+│   ├── categories.toml     "Frukt" = "Frukt & Bär"   (category → its group)
+│   └── category_vat.toml   "Frukt" = "12"         (category → VAT %, or "manual")
+└── language/               how a label in each language is read
+    └── sv/                 Swedish
+        └── units.toml      "styck" = "piece"      (word, lowercase → unit)
 ```
+
+**A market and a language are different things.** A market's tables say how
+its register writes a value: Sweden writes a litre `L`. A language's tables
+say how a label printed in that language is read: Swedish calls a piece
+`styck`. A pack sold in Sweden can be printed in Danish, so the two are kept
+apart.
+
+**Units are named by code**: `g`, `kg`, `ml`, `cl`, `dl`, `l`, and `piece` for
+a count. The symbols themselves (`g`, `ML`, `l`) are read in every language,
+so no language lists them. A language's `units.toml` holds only its words:
+`gram`, `kilo`, `liter`, `st`, `styck` for Swedish. A market's `units.toml`
+spells every unit once.
+
+**A language has only the tables someone has written for it.** Swedish has
+`units.toml`; the other languages have none yet, which means mangel reads no
+unit words in them, not that something is missing. The languages are the
+codes in `src/language.rs`: `sv da nb hu hr de el ka en`, and `tr it fr es pl`
+for reading only.
 
 `categories.toml` and `category_vat.toml` must name exactly the same
 categories — a test holds them to it. A category name appears once in the
@@ -94,13 +115,30 @@ entry to mangel. It is in production once a version containing it has been
 published and CatalogOS has been moved onto that version. That trade is
 deliberate; see [docs/vocabulary.md](../../docs/vocabulary.md).
 
-## Adding a table or a market
+## Adding words for a language
 
-Both need a code change first, because both need code that uses them:
+Create `language/<code>/units.toml` if it is not there, and add lines:
 
-- **A new table** (unit spellings, say) is a field on `Vocabulary` in
-  `src/vocabulary.rs`, a name in `TABLES` in `build.rs`, and one file per
-  market.
+```toml
+"stk" = "piece"
+"gramm" = "g"
+```
+
+The word on the left is lowercase. The unit on the right is one of the codes
+above. The build refuses a word with capitals, a symbol (it is read already),
+and a unit mangel does not know.
+
+## Adding a table, a market or a language
+
+Each needs a code change first, because each needs code that uses it:
+
+- **A new market table** is a field on `Vocabulary` in `src/vocabulary.rs`, a
+  name in `TABLES` in `build.rs`, and one file per market.
+- **A new language table** is a field on `LanguageVocabulary` and a name in
+  `LANGUAGE_TABLES`. A language without the file simply has none of its words.
 - **A new market** is a variant of `Market` in `src/market.rs`, then a
   directory here containing every table. A directory for a market that does
   not exist in code is refused.
+- **A new language** is a variant of `Language` in `src/language.rs`. A
+  directory under `language/` for a language that does not exist in code is
+  refused.

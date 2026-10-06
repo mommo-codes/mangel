@@ -3,7 +3,7 @@
 use mangel::rules::{
     categories, category, cleaned_name, deposit, size, vat, Category, CategoryVat,
 };
-use mangel::{Market, Vocabulary};
+use mangel::{Market, Unit, Vocabulary};
 
 const SE: Market = Market::Se;
 
@@ -42,19 +42,89 @@ fn a_size_is_not_guessed() {
 }
 
 #[test]
+fn an_amount_that_reads_two_ways_is_declined() {
+    // A point and three digits is a decimal in some conventions and a
+    // thousands separator in others: declined in every unit.
+    for (text, readings) in [
+        ("1.000 g", "could be 1 g or 1000 g"),
+        ("1.000 kg", "could be 1 kg or 1000 kg"),
+        ("1.500 L", "could be 1.5 L or 1500 L"),
+        ("250.000 ml", "could be 250 ml or 250000 ml"),
+        ("3.000st", "could be 3 st or 3000 st"),
+    ] {
+        let reason = declined(size(text, SE));
+        assert!(reason.contains(readings), "{text:?}: {reason}");
+    }
+    // A comma and three digits, outside kg and L, where a thousands
+    // separator is the likelier reading.
+    for (text, readings) in [
+        ("1,000 g", "could be 1 g or 1000 g"),
+        ("1,500 ml", "could be 1,5 ml or 1500 ml"),
+        ("2,250 cl", "could be 2,25 cl or 2250 cl"),
+        ("1,000 dl", "could be 1 dl or 1000 dl"),
+    ] {
+        let reason = declined(size(text, SE));
+        assert!(reason.contains(readings), "{text:?}: {reason}");
+    }
+}
+
+#[test]
+fn three_decimals_after_a_comma_are_whole_grams_in_kg_and_l() {
+    assert_eq!(read_size("1,048kg"), ("1.048".into(), "kg"));
+    assert_eq!(read_size("1,000 kg"), ("1".into(), "kg"));
+    assert_eq!(read_size("1,500 L"), ("1.5".into(), "L"));
+    assert_eq!(read_size("2,250 liter"), ("2.25".into(), "L"));
+}
+
+#[test]
+fn an_amount_with_one_reading_is_still_read() {
+    // Nothing opens a thousand with 0, so these are decimals. 0,75 L is a
+    // wine bottle, with either separator.
+    assert_eq!(read_size("0,750 L"), ("0.75".into(), "L"));
+    assert_eq!(read_size("0.750 L"), ("0.75".into(), "L"));
+    assert_eq!(read_size("0.250 kg"), ("0.25".into(), "kg"));
+    assert_eq!(read_size("0,125 g"), ("0.125".into(), "g"));
+    // Two decimals is no thousands separator.
+    assert_eq!(read_size("1,25 kg"), ("1.25".into(), "kg"));
+    assert_eq!(read_size("1.50L"), ("1.5".into(), "L"));
+    assert_eq!(read_size("1000 g"), ("1000".into(), "g"));
+}
+
+#[test]
 fn the_units_are_the_registers_spellings() {
     let golden = ["g", "kg", "ml", "cl", "dl", "L", "st"];
-    for (written, unit) in Vocabulary::of(SE).units {
-        assert_eq!(
-            *written,
-            written.to_lowercase(),
-            "{written:?} is not lowercase"
-        );
+    let spelled = Vocabulary::of(SE).units;
+    for unit in Unit::ALL {
+        let found: Vec<_> = spelled
+            .iter()
+            .filter(|(listed, _)| listed == unit)
+            .collect();
+        assert_eq!(found.len(), 1, "{unit:?} is not spelled exactly once");
         assert!(
-            golden.contains(unit),
-            "{unit:?} is not a spelling the register takes"
+            golden.contains(&found[0].1),
+            "{:?} is not a spelling the register takes",
+            found[0].1
         );
     }
+}
+
+#[test]
+fn a_unit_is_a_symbol_or_a_word_of_the_markets_language() {
+    // Symbols, in any case.
+    assert_eq!(read_size("5 ML"), ("5".into(), "ml"));
+    assert_eq!(read_size("5 Dl"), ("5".into(), "dl"));
+    // Swedish words, in any case.
+    assert_eq!(read_size("5 Gram"), ("5".into(), "g"));
+    assert_eq!(read_size("5 KILO"), ("5".into(), "kg"));
+    assert_eq!(read_size("5 styck"), ("5".into(), "st"));
+    assert_eq!(read_size("5 liter"), ("5".into(), "L"));
+    // A word of another language is not Swedish.
+    assert!(declined(size("5 stk", SE)).contains("\"stk\" is not a unit"));
+    // The list of units the sentence offers is the market's, in its order.
+    assert_eq!(
+        declined(size("56 lbs", SE)),
+        "\"lbs\" is not a unit; use cl, dl, g, kg, L, ml or st"
+    );
 }
 
 #[test]
@@ -66,6 +136,24 @@ fn a_cleaned_name_starts_with_a_capital() {
     let reason = declined(cleaned_name("ägg 12-pack"));
     assert!(reason.contains("\"Ägg 12-pack\""), "{reason}");
     assert_eq!(declined(cleaned_name("")), "is empty");
+}
+
+#[test]
+fn a_name_in_a_script_without_capitals_has_none_to_check() {
+    // Georgian: Unicode files these letters as lowercase, but the language
+    // is written without case.
+    assert_eq!(cleaned_name("ხაჭაპური").unwrap(), "ხაჭაპური");
+    assert_eq!(
+        cleaned_name(" ხაჭაპური  იმერული ").unwrap(),
+        "ხაჭაპური იმერული"
+    );
+    // Arabic and Chinese have no case at all.
+    assert_eq!(cleaned_name("حمص").unwrap(), "حمص");
+    assert_eq!(cleaned_name("豆腐").unwrap(), "豆腐");
+    // Greek and Cyrillic have capitals, so they are still checked.
+    let reason = declined(cleaned_name("ελιές"));
+    assert!(reason.contains("\"Ελιές\""), "{reason}");
+    assert!(cleaned_name("кефир").is_err());
 }
 
 #[test]

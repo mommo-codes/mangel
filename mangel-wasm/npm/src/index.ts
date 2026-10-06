@@ -14,6 +14,10 @@ import initWasm, {
   category as wasmCategory,
   cleanedName as wasmCleanedName,
   deposit as wasmDeposit,
+  fields as wasmFields,
+  languages as wasmLanguages,
+  profiles as wasmProfiles,
+  read as wasmRead,
   size as wasmSize,
   vat as wasmVat,
 } from "../wasm/mangel_wasm.js";
@@ -74,22 +78,102 @@ export interface Category {
   vat: number | null;
 }
 
+/** A rule's refusal: an `Error` named `"Declined"`, whose message is a
+ *  sentence a person can act on and whose `code` never changes. */
+export interface Declined extends Error {
+  name: "Declined";
+  /** Why, as a stable code: `"no_unit"`, `"no_rule"`. See docs/decline-codes.md. */
+  code: string;
+}
+
 /**
- * A rule's refusal. Every rule below throws one — an `Error` named
- * `"Declined"` whose message is a sentence a person can act on — rather
- * than guessing. A bad market code throws a plain `Error` instead.
+ * A rule's refusal. Every rule below throws one rather than guessing. A bad
+ * market, field, profile or language code throws a plain `Error` instead.
  */
-export function isDeclined(error: unknown): error is Error {
+export function isDeclined(error: unknown): error is Declined {
   return error instanceof Error && error.name === "Declined";
 }
 
-/** A size read into its amount and unit: `"56kg"` is `{ amount: "56", unit: "kg" }`. */
+/** Where a value comes from and where it goes. */
+export interface ReadOptions {
+  /** The market whose register the value goes into: `"se"`. */
+  market: string;
+  /** Who mangel reads for: see {@link profiles}. */
+  profile: string;
+  /** The languages printed on the pack, any number. */
+  label?: string[];
+  /** The language a language-neutral value is named in; the market's own
+   *  by default. Must be an output language (see {@link languages}). */
+  output?: string;
+  /** The product's category, which a VAT rate is read against. */
+  category?: string;
+}
+
+/** A value without a language or a market's spelling. */
+export type Neutral =
+  | { kind: "text"; text: string }
+  | { kind: "size"; amount: string; unit: string }
+  | { kind: "category"; category: Category }
+  | { kind: "rate"; rate: number }
+  | { kind: "deposit"; amount: number | null };
+
+/** A field, read. */
+export interface Read {
+  /** The value as the market writes it: `"0,5L"` in Sweden. */
+  value: string;
+  /** The value without a language or a market's spelling. */
+  neutral: Neutral;
+  /** What was changed, as codes: `spacing`, `amount`, `unit_spelling`. */
+  changes: string[];
+}
+
+/** A language mangel reads. */
+export interface Language {
+  code: string;
+  name: string;
+  /** Whether a value can be named in it, rather than only read. */
+  output: boolean;
+}
+
+/**
+ * Read `text` as `field` (see {@link fields}). Throws a {@link Declined}
+ * when the value cannot be read, with `code` `"no_rule"` when the profile
+ * has no rule for the field.
+ */
+export function read(field: string, text: string, options: ReadOptions): Read {
+  assertReady();
+  return wasmRead(field, text, options) as Read;
+}
+
+/** Every field {@link read} takes, by code. */
+export function fields(): string[] {
+  assertReady();
+  return wasmFields() as string[];
+}
+
+/** Every profile {@link read} takes, by code. */
+export function profiles(): string[] {
+  assertReady();
+  return wasmProfiles() as string[];
+}
+
+/** Every language mangel reads. */
+export function languages(): Language[] {
+  assertReady();
+  return wasmLanguages() as Language[];
+}
+
+/** A size read into its amount and unit: `"56kg"` is `{ amount: "56", unit: "kg" }`.
+ *  An amount that reads as two numbers is declined: `"1.000 g"` could be
+ *  1 g or 1000 g. */
 export function size(text: string, market: string): Size {
   assertReady();
   return wasmSize(text, market) as Size;
 }
 
-/** A cleaned name, checked: trimmed, and its first word starting with a capital. */
+/** A cleaned name, checked: trimmed, and its first word starting with a
+ *  capital where its script has capitals (Georgian, Arabic and Chinese do
+ *  not). */
 export function cleanedName(text: string): string {
   assertReady();
   return wasmCleanedName(text);

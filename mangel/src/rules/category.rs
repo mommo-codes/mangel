@@ -10,7 +10,7 @@
 //! typed rate that contradicts the category is declined, not corrected: the
 //! product or the category is wrong, and only a person knows which.
 
-use super::{listed, Declined};
+use super::{listed, Code, Declined};
 use crate::{Market, Vocabulary};
 
 /// The VAT a category carries.
@@ -69,7 +69,7 @@ fn vat_of(vocabulary: &Vocabulary, name: &str) -> CategoryVat {
 pub fn category(text: &str, market: Market) -> Result<Category, Declined> {
     let text = text.trim();
     if text.is_empty() {
-        return Err(Declined::new("is empty"));
+        return Err(Declined::new(Code::Empty, "is empty"));
     }
     let wanted = text.to_lowercase();
     let all = categories(market);
@@ -85,10 +85,13 @@ pub fn category(text: &str, market: Market) -> Result<Category, Declined> {
         [only] => return Ok(**only),
         [] => {}
         many => {
-            return Err(Declined::new(format!(
-                "{text:?} is a group; choose one of its categories: {}",
-                names(many)
-            )))
+            return Err(Declined::new(
+                Code::CategoryIsGroup,
+                format!(
+                    "{text:?} is a group; choose one of its categories: {}",
+                    names(many)
+                ),
+            ))
         }
     }
     let matching: Vec<&Category> = all
@@ -97,12 +100,18 @@ pub fn category(text: &str, market: Market) -> Result<Category, Declined> {
         .collect();
     match matching.as_slice() {
         [only] => Ok(**only),
-        [] => Err(Declined::new(format!("{text:?} is not a category"))),
-        many => Err(Declined::new(format!(
-            "{text:?} is in {} categories; choose one: {}",
-            many.len(),
-            names(many)
-        ))),
+        [] => Err(Declined::new(
+            Code::CategoryUnknown,
+            format!("{text:?} is not a category"),
+        )),
+        many => Err(Declined::new(
+            Code::CategoryAmbiguous,
+            format!(
+                "{text:?} is in {} categories; choose one: {}",
+                many.len(),
+                names(many)
+            ),
+        )),
     }
 }
 
@@ -133,27 +142,33 @@ pub fn vat(category: &Category, text: &str, market: Market) -> Result<u8, Declin
     if typed.is_empty() {
         return match category.vat {
             CategoryVat::Rate(rate) => Ok(rate),
-            CategoryVat::Manual => Err(Declined::new(format!(
-                "{} holds products at more than one rate; type this one's: {}",
-                category.name,
-                rate_list()
-            ))),
+            CategoryVat::Manual => Err(Declined::new(
+                Code::VatMustBeTyped,
+                format!(
+                    "{} holds products at more than one rate; type this one's: {}",
+                    category.name,
+                    rate_list()
+                ),
+            )),
         };
     }
     let rate = match typed.parse::<u8>() {
         Ok(rate) if rates.contains(&rate) => rate,
         _ => {
-            return Err(Declined::new(format!(
-                "{text:?} is not a VAT rate; it is {}",
-                rate_list()
-            )))
+            return Err(Declined::new(
+                Code::VatUnknown,
+                format!("{text:?} is not a VAT rate; it is {}", rate_list()),
+            ))
         }
     };
     match category.vat {
-        CategoryVat::Rate(expected) if expected != rate => Err(Declined::new(format!(
-            "{rate}% does not match {}, which is {expected}%; fix the VAT or the category",
-            category.name
-        ))),
+        CategoryVat::Rate(expected) if expected != rate => Err(Declined::new(
+            Code::VatMismatch,
+            format!(
+                "{rate}% does not match {}, which is {expected}%; fix the VAT or the category",
+                category.name
+            ),
+        )),
         _ => Ok(rate),
     }
 }

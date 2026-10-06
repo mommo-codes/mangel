@@ -9,6 +9,8 @@
 mod layout;
 #[path = "../codegen/table.rs"]
 mod table;
+#[path = "../codegen/units.rs"]
+mod units;
 
 use table::Problem;
 
@@ -170,12 +172,17 @@ mod table_refusals {
 mod layout_checks {
     use super::layout;
 
-    const MARKETS: &[&str] = &["se"];
-    const TABLES: &[&str] = &["abbreviations"];
-
     fn check(files: &[&str]) -> Vec<String> {
         let files: Vec<String> = files.iter().map(|file| file.to_string()).collect();
-        layout::problems(&files, MARKETS, TABLES)
+        layout::problems(
+            &files,
+            &layout::Expected {
+                markets: &["se"],
+                tables: &["abbreviations"],
+                languages: &["sv", "da"],
+                language_tables: &["units"],
+            },
+        )
     }
 
     #[test]
@@ -234,5 +241,92 @@ mod layout_checks {
         let found = check(&["se/abbreviations.toml", "se/old/abbreviations.toml"]);
         assert_eq!(found.len(), 1, "{found:#?}");
         assert!(found[0].contains("is inside a folder"));
+    }
+
+    #[test]
+    fn a_language_has_only_the_tables_written_for_it() {
+        // Swedish has a units table, Danish none: both are fine.
+        assert!(check(&["se/abbreviations.toml", "language/sv/units.toml"]).is_empty());
+    }
+
+    #[test]
+    fn a_language_that_does_not_exist_in_code() {
+        let found = check(&[
+            "se/abbreviations.toml",
+            "language/fi/units.toml",
+            "language/fi/other.toml",
+        ]);
+        assert_eq!(found.len(), 1, "one message per language: {found:#?}");
+        assert!(found[0].starts_with("vocabulary/language/fi/ is not a language"));
+    }
+
+    #[test]
+    fn a_misspelled_language_table() {
+        let found = check(&["se/abbreviations.toml", "language/sv/unit.toml"]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].starts_with("vocabulary/language/sv/unit.toml is not a language table"));
+    }
+
+    #[test]
+    fn a_file_loose_in_the_language_folder() {
+        let found = check(&["se/abbreviations.toml", "language/units.toml"]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("holds one directory per language"));
+    }
+
+    #[test]
+    fn a_language_table_in_a_subfolder() {
+        let found = check(&["se/abbreviations.toml", "language/sv/old/units.toml"]);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("is not where a language table goes"));
+    }
+}
+
+mod unit_tables {
+    use super::units;
+
+    const CODES: &[&str] = &["g", "l", "piece"];
+    const SYMBOLS: &[&str] = &["g", "l"];
+
+    fn entries(pairs: &[(&str, &str)]) -> Vec<(String, String)> {
+        pairs
+            .iter()
+            .map(|(a, b)| (a.to_string(), b.to_string()))
+            .collect()
+    }
+
+    #[test]
+    fn a_market_spells_every_unit() {
+        let complete = entries(&[("g", "g"), ("l", "L"), ("piece", "st")]);
+        assert!(units::market_problems(&complete, CODES).is_empty());
+        let found = units::market_problems(&entries(&[("g", "g"), ("l", "L")]), CODES);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("\"piece\" has no spelling"));
+    }
+
+    #[test]
+    fn a_market_names_only_units_mangel_knows() {
+        let found = units::market_problems(
+            &entries(&[("g", "g"), ("l", "L"), ("piece", "st"), ("lb", "lb")]),
+            CODES,
+        );
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("\"lb\" is not a unit mangel knows"));
+    }
+
+    #[test]
+    fn a_word_names_a_unit_mangel_knows() {
+        assert!(units::language_problems(&entries(&[("gram", "g")]), CODES, SYMBOLS).is_empty());
+        let found = units::language_problems(&entries(&[("pund", "lb")]), CODES, SYMBOLS);
+        assert_eq!(found.len(), 1, "{found:#?}");
+        assert!(found[0].contains("\"pund\" names \"lb\""));
+    }
+
+    #[test]
+    fn a_word_is_lowercase_and_not_a_symbol() {
+        let found = units::language_problems(&entries(&[("Gram", "g")]), CODES, SYMBOLS);
+        assert!(found[0].contains("has capitals"), "{found:#?}");
+        let found = units::language_problems(&entries(&[("l", "l")]), CODES, SYMBOLS);
+        assert!(found[0].contains("is a symbol"), "{found:#?}");
     }
 }

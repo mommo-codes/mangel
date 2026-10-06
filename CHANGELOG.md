@@ -1,5 +1,57 @@
 # Changelog
 
+## 0.2.0
+
+One change below breaks the Rust API, hence 0.2.0. Python and TypeScript
+callers are unaffected.
+
+### read(): one call for every field
+
+- `read(field, text, context)` in all three runtimes. It returns the value as
+  the market writes it (`0,5L` in Sweden), the value without a language or a
+  market's spelling, and what was changed (`spacing`, `amount`,
+  `unit_spelling`). See docs/read.md.
+- Profiles: `name_scrubbing` reads with the existing checks, unchanged.
+  `laundry_room` has no field yet, and declines every one with `no_rule`
+  until its rules arrive, one field at a time.
+- Language inputs: `label` (the languages on the pack, any number) and
+  `output` (the language a language-neutral value is named in). Output
+  languages are `sv da nb hu hr de el ka en`; `tr it fr es pl` are read only.
+  No rule reads them yet.
+- `fields()`, `profiles()` and `languages()` list what `read` takes.
+- Every decline has a stable code beside its sentence: Python's `Declined`
+  has `.code`, TypeScript's has `code`, Rust has `Declined::code()`. The
+  existing functions carry them too. See docs/decline-codes.md.
+- Vocabulary by language: `vocabulary/language/<code>/`. The first table is
+  `units.toml`.
+  - Swedish unit words (`gram`, `kilo`, `liter`, `st`, `styck`) moved there
+    from `vocabulary/se/units.toml`, which now holds only each unit's golden
+    spelling.
+  - Symbols (`g`, `ml`) are read in every language.
+  - `size` for `se` answers exactly as before, sentences included, over
+    10,268 generated inputs.
+- **Breaking, Rust only:** `Vocabulary::units` is now each unit's spelling,
+  `&[(Unit, &str)]`, where it was each written form's.
+- `Unit` and `Language` are new types. `Market` has `language()`,
+  `decimal_separator()` and `space_before_unit()`.
+
+### Two fixes
+
+- `size` declines an amount that reads as two numbers: one to three digits
+  (not starting with 0), a separator, and exactly three digits. `1.000 g`
+  was read as 1 g; it is now declined as "could be 1 g or 1000 g". A point
+  declines in every unit. A comma declines in g, ml, cl, dl and st and stays
+  a decimal in kg and L, where three decimals are whole grams and
+  millilitres (`1,048kg`, `1,000 kg`). `0,750 L` and `1,25 kg` read as
+  before. The rule recorded in #2; the bug is #7.
+- `cleaned_name` no longer declines a name written in a script without
+  capitals. Georgian (`ხაჭაპური`) was declined as starting with a small
+  letter, and the suggested fix put an all-capitals letter in front, which
+  is misspelled Georgian. Arabic, Hebrew, Chinese, Japanese, Korean, Thai
+  and every other caseless script were declined the same way, and so were
+  titlecase letters (`ǅ`), which are capitals. A lowercase letter of a
+  script with capitals (Latin, Greek, Cyrillic) is still declined. #8.
+
 ## 0.1.0
 
 The first rules — the ones Name Scrubbing's cleaning sheet reads with. Every
