@@ -1,0 +1,16 @@
+# Swedish words for units, as labels and product data write them.
+#
+#   "word" = "unit"
+#
+# Keys are lowercase: a word is matched without regard to case, so "Gram"
+# and "GRAM" find "gram" here. Symbols (g, kg, ml, cl, dl, l) are read in
+# every language and are not listed. A unit is named by its code: g, kg, ml,
+# cl, dl, l, or piece for a count. A word not listed is refused, never
+# guessed. See ../../README.md before editing.
+
+"gr" = "g"
+"gram" = "g"
+"kilo" = "kg"
+"liter" = "l"
+"st" = "piece"
+"styck" = "piece"

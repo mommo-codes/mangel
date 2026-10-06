@@ -4,7 +4,7 @@
 //! [`Market::deposits`] is declined — a deposit the register does not know
 //! would be charged at the till.
 
-use super::{listed, Declined};
+use super::{listed, Code, Declined};
 use crate::Market;
 
 /// Read a deposit. An empty field is no deposit.
@@ -25,10 +25,13 @@ pub fn deposit(text: &str, market: Market) -> Result<Option<u8>, Declined> {
     let refuse = || {
         let amounts: Vec<String> = allowed.iter().map(u8::to_string).collect();
         let amounts: Vec<&str> = amounts.iter().map(String::as_str).collect();
-        Declined::new(format!(
-            "{text:?} is not a deposit; it is {}, or empty for none",
-            listed(&amounts).replacen(" and ", " or ", 1)
-        ))
+        Declined::new(
+            Code::DepositUnknown,
+            format!(
+                "{text:?} is not a deposit; it is {}, or empty for none",
+                listed(&amounts).replacen(" and ", " or ", 1)
+            ),
+        )
     };
 
     let lowered = text.to_lowercase();

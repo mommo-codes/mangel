@@ -7,9 +7,12 @@
 //!
 //! This file is also compiled into `build.rs`, which reads [`Market::ALL`] to
 //! learn which vocabulary directories must exist. It therefore depends on
-//! nothing but `std`, so the list of markets is written down exactly once.
+//! nothing but `std` and the language list, so the list of markets is written
+//! down exactly once.
 
 use std::fmt;
+
+use crate::language::Language;
 
 /// A market mangel has conventions for.
 ///
@@ -32,6 +35,30 @@ impl Market {
     pub const fn code(self) -> &'static str {
         match self {
             Market::Se => "se",
+        }
+    }
+
+    /// The language the market's register is written in, and the one a
+    /// language-neutral value is named in when the caller does not choose.
+    pub const fn language(self) -> Language {
+        match self {
+            Market::Se => Language::Sv,
+        }
+    }
+
+    /// The decimal separator the market writes a number with: `0,5L` in
+    /// Sweden.
+    pub const fn decimal_separator(self) -> char {
+        match self {
+            Market::Se => ',',
+        }
+    }
+
+    /// Whether the market writes a space between an amount and its unit:
+    /// Sweden writes `500g`.
+    pub const fn space_before_unit(self) -> bool {
+        match self {
+            Market::Se => false,
         }
     }
 

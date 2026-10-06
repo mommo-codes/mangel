@@ -15,9 +15,13 @@ mangel takes a messy field and returns what it means:
 | `Laktosfri` | `LF` |
 | `coca cola` | `Coca-Cola` — casing and spacing only; matching it to a brand row is CatalogOS's job |
 
-> **Status: 0.1.0 — the cleaning sheet's rules.** `size`, `cleaned_name`,
-> `category`, `vat` and `deposit`, for Sweden, in all three runtimes. The
-> multipack, abbreviation and brand-casing parsing below is still to come.
+> **Status: 0.1.0 — the cleaning sheet's rules**, plus, unreleased, `read()`:
+> one call for every field, with profiles and language inputs
+> ([docs/read.md](docs/read.md)). `size`, `cleaned_name`, `category`, `vat`
+> and `deposit`, for Sweden, in all three runtimes. The fixing rules (OCR
+> weights and volumes first, then countries, names, allergens) are filed as
+> issues, one per field, market and language. The multipack, abbreviation and
+> brand-casing parsing below is still to come.
 
 ## Deterministic and pure
 
@@ -37,7 +41,8 @@ That is the design constraint, and it is enforced rather than intended:
 ## Logic in code, vocabulary in data
 
 Abbreviations, unit spellings and the like live in TOML, one directory per
-market, so someone who does not write Rust can add to them:
+market and one per language, so someone who does not write Rust can add to
+them:
 
 ```toml
 # mangel/vocabulary/se/abbreviations.toml
@@ -50,6 +55,18 @@ library never parses TOML. Every vocabulary change is therefore a release,
 deliberately — see [docs/vocabulary.md](docs/vocabulary.md).
 
 How to edit the tables: [mangel/vocabulary/README.md](mangel/vocabulary/README.md).
+
+## Declining
+
+Every rule returns what a field means, or declines with a sentence a person
+can act on and a code a program can act on: `no_unit`, `two_readings`,
+`no_rule`. Codes never change; see [docs/decline-codes.md](docs/decline-codes.md).
+
+## Trying it
+
+[examples/try-it](examples/try-it) is a page for pasting messy values and
+seeing what each one reads as, what was changed, or why it is declined. It
+runs the local WebAssembly build.
 
 ## Layout
 

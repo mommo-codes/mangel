@@ -7,7 +7,7 @@
 //! neither does one written in a script without capitals: Georgian
 //! (`ხაჭაპური`), Arabic, Hebrew, Chinese, Thai.
 
-use super::Declined;
+use super::{Code, Declined};
 
 /// Check a cleaned name. Returns it trimmed, with its inner spacing
 /// collapsed to single spaces.
@@ -23,13 +23,16 @@ use super::Declined;
 pub fn cleaned_name(text: &str) -> Result<String, Declined> {
     let name = text.split_whitespace().collect::<Vec<_>>().join(" ");
     let Some(first) = name.chars().next() else {
-        return Err(Declined::new("is empty"));
+        return Err(Declined::new(Code::Empty, "is empty"));
     };
     if first.is_lowercase() && has_capitals(first) {
         let fixed: String = first.to_uppercase().chain(name.chars().skip(1)).collect();
-        return Err(Declined::new(format!(
-            "{name:?} starts with a small letter; the first word starts with a capital, as in {fixed:?}"
-        )));
+        return Err(Declined::new(
+            Code::SmallFirstLetter,
+            format!(
+                "{name:?} starts with a small letter; the first word starts with a capital, as in {fixed:?}"
+            ),
+        ));
     }
     Ok(name)
 }

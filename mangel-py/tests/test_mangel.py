@@ -85,3 +85,67 @@ class TestRules:
         with pytest.raises(ValueError) as raised:
             mangel.size("56kg", "SE")
         assert not isinstance(raised.value, mangel.Declined)
+
+
+class TestRead:
+    """read() crosses the boundary with its value, its neutral value, its
+    changes and its codes. What it decides is tested once, in Rust."""
+
+    def test_a_read_is_a_plain_dict(self):
+        read = mangel.read("size", "0,5 l", market="se", profile="name_scrubbing")
+        assert read == {
+            "value": "0,5L",
+            "neutral": {"kind": "size", "amount": "0.5", "unit": "l"},
+            "changes": ["spacing", "unit_spelling"],
+        }
+
+    def test_every_decline_carries_its_code(self):
+        with pytest.raises(mangel.Declined) as raised:
+            mangel.read("size", "56", market="se", profile="name_scrubbing")
+        assert raised.value.code == "no_unit"
+        with pytest.raises(mangel.Declined) as raised:
+            mangel.read("weight", "500 g", market="se", profile="laundry_room")
+        assert raised.value.code == "no_rule"
+        # The existing functions carry the same codes.
+        with pytest.raises(mangel.Declined) as raised:
+            mangel.size("1.000 g", "se")
+        assert raised.value.code == "two_readings"
+
+    def test_vat_is_read_against_the_category(self):
+        read = mangel.read(
+            "vat", "", market="se", profile="name_scrubbing", category="Frukt"
+        )
+        assert read["neutral"] == {"kind": "rate", "rate": 12}
+
+    def test_language_inputs_are_checked(self):
+        mangel.read(
+            "name",
+            "Mjölk",
+            market="se",
+            profile="name_scrubbing",
+            label=["da", "tr"],
+            output="da",
+        )
+        with pytest.raises(ValueError, match="is read but not written") as raised:
+            mangel.read("name", "Mjölk", market="se", profile="name_scrubbing", output="tr")
+        assert not isinstance(raised.value, mangel.Declined)
+        with pytest.raises(ValueError, match="unknown language"):
+            mangel.read("name", "Mjölk", market="se", profile="name_scrubbing", label=["no"])
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {"market": "SE", "profile": "name_scrubbing"},
+            {"market": "se", "profile": "Name Scrubbing"},
+        ],
+    )
+    def test_a_bad_code_is_not_a_decline(self, kwargs):
+        with pytest.raises(ValueError) as raised:
+            mangel.read("name", "Mjölk", **kwargs)
+        assert not isinstance(raised.value, mangel.Declined)
+
+    def test_the_lists_come_from_the_core(self):
+        assert "weight" in mangel.fields()
+        assert mangel.profiles() == ["name_scrubbing", "laundry_room"]
+        output = [l["code"] for l in mangel.languages() if l["output"]]
+        assert output == ["sv", "da", "nb", "hu", "hr", "de", "el", "ka", "en"]

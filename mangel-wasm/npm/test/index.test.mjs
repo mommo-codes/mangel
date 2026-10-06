@@ -77,3 +77,38 @@ test("a decline is thrown with its reason, and is told apart from a bad market",
   assert.match(caught.message, /does not match Frukt/);
   assert.throws(() => mangel.size("56kg", "SE"), (error) => !mangel.isDeclined(error));
 });
+
+test("read crosses the boundary with its value, neutral value and changes", () => {
+  const read = mangel.read("size", "0,5 l", { market: "se", profile: "name_scrubbing" });
+  assert.equal(read.value, "0,5L");
+  assert.deepEqual({ ...read.neutral }, { kind: "size", amount: "0.5", unit: "l" });
+  assert.deepEqual([...read.changes], ["spacing", "unit_spelling"]);
+  const vat = mangel.read("vat", "", { market: "se", profile: "name_scrubbing", category: "Frukt" });
+  assert.deepEqual({ ...vat.neutral }, { kind: "rate", rate: 12 });
+});
+
+test("every decline carries its code, and a bad code is not a decline", () => {
+  const codeOf = (run) => {
+    try {
+      run();
+    } catch (error) {
+      return mangel.isDeclined(error) ? error.code : `not declined: ${error.message}`;
+    }
+    return "read";
+  };
+  assert.equal(codeOf(() => mangel.read("size", "56", { market: "se", profile: "name_scrubbing" })), "no_unit");
+  assert.equal(codeOf(() => mangel.read("weight", "500 g", { market: "se", profile: "laundry_room" })), "no_rule");
+  assert.equal(codeOf(() => mangel.size("1.000 g", "se")), "two_readings");
+  assert.match(codeOf(() => mangel.read("size", "5 g", { market: "se", profile: "nope" })), /^not declined: unknown profile/);
+  assert.match(
+    codeOf(() => mangel.read("name", "Mjölk", { market: "se", profile: "name_scrubbing", output: "tr" })),
+    /^not declined: "tr" is read but not written/,
+  );
+});
+
+test("the lists come from the core", () => {
+  assert.ok(mangel.fields().includes("weight"));
+  assert.deepEqual(mangel.profiles(), ["name_scrubbing", "laundry_room"]);
+  const output = mangel.languages().filter((language) => language.output).map((language) => language.code);
+  assert.deepEqual(output, ["sv", "da", "nb", "hu", "hr", "de", "el", "ka", "en"]);
+});
