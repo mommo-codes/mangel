@@ -62,7 +62,8 @@ fn size(text: &str, market: &str) -> PyResult<(String, &'static str)> {
     Ok((read.amount, read.unit))
 }
 
-/// A cleaned name, checked: trimmed, and starting with a capital.
+/// A cleaned name, checked: trimmed, and starting with a capital where its
+/// script has capitals.
 #[pyfunction]
 fn cleaned_name(text: &str) -> PyResult<String> {
     rules::cleaned_name(text).map_err(declined)

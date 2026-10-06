@@ -118,6 +118,24 @@ fn a_cleaned_name_starts_with_a_capital() {
 }
 
 #[test]
+fn a_name_in_a_script_without_capitals_has_none_to_check() {
+    // Georgian: Unicode files these letters as lowercase, but the language
+    // is written without case.
+    assert_eq!(cleaned_name("ხაჭაპური").unwrap(), "ხაჭაპური");
+    assert_eq!(
+        cleaned_name(" ხაჭაპური  იმერული ").unwrap(),
+        "ხაჭაპური იმერული"
+    );
+    // Arabic and Chinese have no case at all.
+    assert_eq!(cleaned_name("حمص").unwrap(), "حمص");
+    assert_eq!(cleaned_name("豆腐").unwrap(), "豆腐");
+    // Greek and Cyrillic have capitals, so they are still checked.
+    let reason = declined(cleaned_name("ελιές"));
+    assert!(reason.contains("\"Ελιές\""), "{reason}");
+    assert!(cleaned_name("кефир").is_err());
+}
+
+#[test]
 fn a_category_is_found_by_name_group_or_one_keyword() {
     let found = |text: &str| category(text, SE).unwrap_or_else(|d| panic!("{text:?}: {d}"));
     assert_eq!(found("Frukt").group, "Frukt & Bär");

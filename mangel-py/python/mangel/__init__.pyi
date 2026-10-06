@@ -37,8 +37,9 @@ def size(text: str, market: str) -> tuple[str, str]:
 
 def cleaned_name(text: str) -> str:
     """A cleaned name, checked: trimmed, inner spacing collapsed, and the
-    first word starting with a capital. Raises ``Declined`` otherwise — it
-    is not capitalised for you."""
+    first word starting with a capital where its script has capitals
+    (Georgian, Arabic and Chinese do not). Raises ``Declined`` otherwise —
+    it is not capitalised for you."""
     ...
 
 def category(text: str, market: str) -> Category:

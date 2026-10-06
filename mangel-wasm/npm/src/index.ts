@@ -91,7 +91,9 @@ export function size(text: string, market: string): Size {
   return wasmSize(text, market) as Size;
 }
 
-/** A cleaned name, checked: trimmed, and its first word starting with a capital. */
+/** A cleaned name, checked: trimmed, and its first word starting with a
+ *  capital where its script has capitals (Georgian, Arabic and Chinese do
+ *  not). */
 export function cleanedName(text: string): string {
   assertReady();
   return wasmCleanedName(text);

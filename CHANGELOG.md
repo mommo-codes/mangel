@@ -9,6 +9,13 @@
   a decimal in kg and L, where three decimals are whole grams and
   millilitres (`1,048kg`, `1,000 kg`). `0,750 L` and `1,25 kg` read as
   before. The rule recorded in #2; the bug is #7.
+- `cleaned_name` no longer declines a name written in a script without
+  capitals. Georgian (`ხაჭაპური`) was declined as starting with a small
+  letter, and the suggested fix put an all-capitals letter in front, which
+  is misspelled Georgian. Arabic, Hebrew, Chinese, Japanese, Korean, Thai
+  and every other caseless script were declined the same way, and so were
+  titlecase letters (`ǅ`), which are capitals. A lowercase letter of a
+  script with capitals (Latin, Greek, Cyrillic) is still declined. #8.
 
 ## 0.1.0
 
